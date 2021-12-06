@@ -1,6 +1,8 @@
 package common
 
 import java.security.MessageDigest
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 class Common(dirPrefix: String) {
@@ -47,5 +49,25 @@ class Common(dirPrefix: String) {
 			sb.append(String.format("%02x", b))
 		}
 		sb.toString
+	}
+
+	// Splits an IndexedSeq of strings into stanzas based on blank lines
+	def splitOnBlanks(input: IndexedSeq[String]): IndexedSeq[IndexedSeq[String]] = {
+		val retVal = IndexedSeq.newBuilder[IndexedSeq[String]]
+		val stanza = IndexedSeq.newBuilder[String]
+		for (line <- input) {
+			if (line.isBlank) {
+				retVal += stanza.result()
+				stanza.clear()
+			}
+			else {
+				stanza += line
+			}
+		}
+		val remainder = stanza.result()
+		if (remainder.nonEmpty) {
+			retVal += remainder
+		}
+		retVal.result()
 	}
 }
