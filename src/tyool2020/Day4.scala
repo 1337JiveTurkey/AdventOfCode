@@ -40,11 +40,79 @@ object Day4 extends Main {
 	}
 
 	def deepValidate(passport: Map[String, String]): Boolean = {
-		false
+		validateByr(passport) &&
+		validateIyr(passport) &&
+		validateEyr(passport) &&
+		validateHgt(passport) &&
+		validateHcl(passport) &&
+		validateEcl(passport) &&
+		validatePid(passport)
 	}
+
+	val fourDigit: Regex = """(\d{4})""".r
+
+	def validateByr(passport: Map[String, String]): Boolean = {
+		passport.get("byr") match {
+			case Some(fourDigit(byr)) => (1920 to 2020) contains byr.toInt
+			case _ => false
+		}
+	}
+
+	def validateIyr(passport: Map[String, String]): Boolean = {
+		passport.get("iyr") match {
+			case Some(fourDigit(iyr)) => (2010 to 2020) contains iyr.toInt
+			case _ => false
+		}
+	}
+
+	def validateEyr(passport: Map[String, String]): Boolean = {
+		passport.get("eyr") match {
+			case Some(fourDigit(eyr)) => (2020 to 2030) contains eyr.toInt
+			case _ => false
+		}
+	}
+
+	val hgtCm: Regex = """(\d+)cm""".r
+	val hgtIn: Regex = """(\d+)in""".r
+
+	def validateHgt(passport: Map[String, String]): Boolean = {
+		passport.get("hgt") match {
+			case Some(hgtCm(cms)) => (150 to 193) contains cms.toInt
+			case Some(hgtIn(ins)) => (59 to 76) contains ins.toInt
+			case _ => false
+		}
+	}
+
+	val hclColor: Regex = """#([0-9a-f]{6})""".r
+
+	def validateHcl(passport: Map[String, String]): Boolean = {
+		passport.get("hcl") match {
+			case Some(hclColor(_)) => true
+			case _ => false
+		}
+	}
+
+	val eclColor: Regex = """(amb|blu|brn|gry|grn|hzl|oth)""".r
+
+	def validateEcl(passport: Map[String, String]): Boolean = {
+		passport.get("ecl") match {
+			case Some(eclColor(_)) => true
+			case _ => false
+		}
+	}
+
+	val nineDigit: Regex = """(\d{9})""".r
+
+	def validatePid(passport: Map[String, String]): Boolean = {
+		passport.get("pid") match {
+			case Some(nineDigit(_)) => true
+			case _ => false
+		}
+	}
+
 
 	def star7(): Unit = {
 		val passports = parseFile(lines)
-		println(passports.count(fieldsExist))
+		println(passports.count(deepValidate))
 	}
 }

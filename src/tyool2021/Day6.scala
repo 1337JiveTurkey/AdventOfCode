@@ -1,6 +1,5 @@
 package tyool2021
 
-import scala.collection.mutable
 import scala.util.matching.Regex
 
 object Day6 extends Main {
@@ -17,7 +16,6 @@ object Day6 extends Main {
 		for (i <- digit.findAllIn(line)) {
 			fish(i.toInt) += 1
 		}
-		println(fish)
 		for (i <- 0 to 256) {
 			println("Day " + i + ": " + fish.sum)
 			val spawned = fish(0)
