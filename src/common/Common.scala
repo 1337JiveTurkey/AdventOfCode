@@ -19,7 +19,12 @@ class Common(dirPrefix: String) {
 	def fileLine(filename: String): String = {
 		val lines = fileLines(filename)
 		assert(lines.length == 1)
-		return lines.head
+		lines.head
+	}
+
+	def fileNumbers(filename: String): IndexedSeq[Int] = {
+		val line = fileLine(filename)
+		line.split(",").flatMap(_.toIntOption)
 	}
 
 	def pairwise[T](list: Iterator[T]): Iterator[(T, T)] = {

@@ -53,41 +53,42 @@ object Day4 extends Main {
 			}
 		}
 	}
-}
 
-class Card(rows: List[List[Int]]) {
-	val allValues: BitSet = BitSet.fromSpecific(rows.flatten)
-	val winners: mutable.Buffer[BitSet] = mutable.Buffer[BitSet]()
-	for (list <- rows ++ rows.transpose) {
-		winners.append(BitSet.fromSpecific(list))
+	class Card(rows: List[List[Int]]) {
+		val allValues: BitSet = BitSet.fromSpecific(rows.flatten)
+		val winners: mutable.Buffer[BitSet] = mutable.Buffer[BitSet]()
+		for (list <- rows ++ rows.transpose) {
+			winners.append(BitSet.fromSpecific(list))
+		}
+
+		def isWinning(calls: BitSet): Boolean = {
+			for (candidate <- winners) {
+				if ((calls & candidate).size == 5) {
+					return true
+				}
+			}
+			false
+		}
+
+		def calledNumbers(calls: BitSet): BitSet = {
+			calls & allValues
+		}
+		def uncalledNumbers(calls: BitSet): BitSet = {
+			allValues diff calls
+		}
 	}
 
-	def isWinning(calls: BitSet): Boolean = {
-		for (candidate <- winners) {
-			if ((calls & candidate).size == 5) {
-				return true
+	object Card extends (List[String] => Card) {
+		private val row: Regex = """\W?(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})""".r
+
+		private def parseRow(r: String): List[Int] = {
+			r match {
+				case row(c1, c2, c3, c4, c5) => List(c1.toInt, c2.toInt, c3.toInt, c4.toInt, c5.toInt)
 			}
 		}
-		false
-	}
-
-	def calledNumbers(calls: BitSet): BitSet = {
-		calls & allValues
-	}
-	def uncalledNumbers(calls: BitSet): BitSet = {
-		allValues diff calls
-	}
-}
-
-object Card extends (List[String] => Card) {
-	private val row: Regex = """\W?(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})\W{1,2}(\d{1,2})""".r
-
-	private def parseRow(r: String): List[Int] = {
-		r match {
-			case row(c1, c2, c3, c4, c5) => List(c1.toInt, c2.toInt, c3.toInt, c4.toInt, c5.toInt)
+		override def apply(strings: List[String]): Card = {
+			new Card(strings map parseRow)
 		}
 	}
-	override def apply(strings: List[String]): Card = {
-		new Card(strings map parseRow)
-	}
 }
+
