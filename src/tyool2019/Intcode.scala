@@ -4,7 +4,10 @@ import scala.collection.mutable
 
 class Intcode(init: String) extends Iterator[String] {
 	val mem: mutable.Buffer[Int] = init.split(",").flatMap(_.toIntOption).toBuffer
+	val input: mutable.Queue[Int] = mutable.Queue[Int]()
+	val output: mutable.Queue[Int] = mutable.Queue[Int]()
 
+	// We're decoding beforehand so we can play nice with hasNext
 	var nextOp: OpCode = decode(0)
 	var pc: Int = nextOp.length
 
@@ -12,9 +15,12 @@ class Intcode(init: String) extends Iterator[String] {
 
 	override def next(): String = {
 		val executing = nextOp
-		nextOp = decode(pc)
-		pc += nextOp.length
-		executing.op(mem)
+		// Keep the same terminal operation
+		if (hasNext) {
+			nextOp = decode(pc)
+			pc += nextOp.length
+		}
+		executing.op()
 	}
 
 	private def decode(at: Int): OpCode = {
@@ -33,23 +39,15 @@ class Intcode(init: String) extends Iterator[String] {
 	}
 
 	// Common parent of opcodes
-	trait OpCode {
-		val at: Int
-		val code: Int
-		val name: String
+	abstract class OpCode(val at: Int, val code: Int, val name: String, val length: Int) {
 		def header: String = s" $name (@$at): "
 		val isTerminal = false;
-		val length: Int
 
-		def op(mem: mutable.Buffer[Int]): String
+		def op(): String
 	}
 
-	case class Add(at: Int, read1: Int, read2: Int, write: Int) extends OpCode {
-		val code = 1
-		val name = "ADD"
-		val length = 4
-
-		override def op(mem: mutable.Buffer[Int]): String = {
+	case class Add(override val at: Int, read1: Int, read2: Int, write: Int) extends OpCode(at, 1, "ADD", 4) {
+		override def op(): String = {
 			val value1 = mem(read1)
 			val value2 = mem(read2)
 			mem(write) = value1 + value2
@@ -57,12 +55,8 @@ class Intcode(init: String) extends Iterator[String] {
 		}
 	}
 
-	case class Multiply(at: Int, read1: Int, read2: Int, write: Int) extends OpCode {
-		val code = 2
-		val name = "MUL"
-		val length = 4
-
-		override def op(mem: mutable.Buffer[Int]): String = {
+	case class Multiply(override val at: Int, read1: Int, read2: Int, write: Int) extends OpCode(at, 2, "MUL", 4) {
+		override def op(): String = {
 			val value1 = mem(read1)
 			val value2 = mem(read2)
 			mem(write) = value1 * value2
@@ -70,40 +64,31 @@ class Intcode(init: String) extends Iterator[String] {
 		}
 	}
 
-	case class Input(at: Int, write: Int) extends OpCode {
-		override val code: Int = 3
-		override val name: String = "INP"
-		override val length: Int = 2
-
-		override def op(mem: mutable.Buffer[Int]): String = {
-			???
+	case class Input(override val at: Int, write: Int) extends OpCode(at, 3, "INP", 2) {
+		override def op(): String = {
+			val value = input.dequeue()
+			mem(write) = value
+			header + s"@$write = $value (Input)"
 		}
 	}
 
-	case class Output(at: Int, read: Int) extends OpCode {
-		override val code: Int = 4
-		override val name: String = "OUT"
-		override val length: Int = 2
-
-		override def op(mem: mutable.Buffer[Int]): String = {
-			???
+	case class Output(override val at: Int, read: Int) extends OpCode(at, 4, "OUT", 2) {
+		override def op(): String = {
+			val value = mem(read)
+			output.enqueue(value)
+			header + s"(Output) = $value (@$read)"
 		}
 	}
 
-	case class Terminate(at: Int) extends OpCode {
-		val code = 99
-		val name = "TRM"
+	case class Terminate(override val at: Int) extends OpCode(at, 99, "TRM", 1) {
 		override val isTerminal = true;
-		val length = 1
 
-		override def op(mem: mutable.Buffer[Int]): String = header + "Terminated"
+		override def op(): String = header + "Terminated"
 	}
-	case class Invalid(code: Int, at: Int) extends OpCode {
-		val name = "XXX"
+	case class Invalid(override val at: Int, override val code: Int) extends OpCode(at, code, "XXX", 1) {
 		override val isTerminal = true;
-		val length = 1
 
-		override def op(mem: mutable.Buffer[Int]): String = header + s"Invalid Instruction $code"
+		override def op(): String = header + s"Invalid Instruction $code"
 	}
 
 }
