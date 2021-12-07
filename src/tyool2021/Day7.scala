@@ -7,10 +7,16 @@ object Day7 extends Main {
 
 	def star13(): Unit = {
 		val positions = fileNumbers("Star13.txt")
-		for (i <- 0 to 3000) {
-			val total = totalDelta(i, positions)
-			println(s"$i\t$total")
-		}
+		val sorted = positions.sorted
+		println(sorted.length)
+		println(sorted(499))
+		println(sorted(500))
+//		val min = positions.min
+//		val max = positions.max
+//		for (i <- min to max) {
+//			val total = totalDelta(i, positions)
+//			println(s"$i\t$total")
+//		}
 	}
 
 	def totalDelta(position: Int, positions: IndexedSeq[Int]): Int = {
