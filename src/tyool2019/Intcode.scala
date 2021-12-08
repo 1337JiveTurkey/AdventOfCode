@@ -33,6 +33,8 @@ class Intcode(init: String) extends Iterator[String] {
 		instruction match {
 			case 1 => Add(at, mem(at + 1), mem(at + 2), mem(at + 3))
 			case 2 => Multiply(at, mem(at + 1), mem(at + 2), mem(at + 3))
+			case 3 => Input(at, mem(at + 1))
+			case 4 => Output(at, mem(at + 1))
 			case 99 => Terminate(at)
 			case invalid => Invalid(invalid, at)
 		}
@@ -50,8 +52,9 @@ class Intcode(init: String) extends Iterator[String] {
 		override def op(): String = {
 			val value1 = mem(read1)
 			val value2 = mem(read2)
-			mem(write) = value1 + value2
-			header + s"@$write = $value1 (@$read1) + $value2 (@$read2)"
+			val result = value1 + value2
+			mem(write) = result
+			header + s"$result (@$write) = $value1 (@$read1) + $value2 (@$read2)"
 		}
 	}
 
@@ -59,8 +62,9 @@ class Intcode(init: String) extends Iterator[String] {
 		override def op(): String = {
 			val value1 = mem(read1)
 			val value2 = mem(read2)
-			mem(write) = value1 * value2
-			header + s"@$write = $value1 (@$read1) * $value2 (@$read2)"
+			val result = value1 * value2
+			mem(write) = result
+			header + s"$result (@$write) = $value1 (@$read1) * $value2 (@$read2)"
 		}
 	}
 
@@ -91,4 +95,15 @@ class Intcode(init: String) extends Iterator[String] {
 		override def op(): String = header + s"Invalid Instruction $code"
 	}
 
+	abstract class ParamMode {
+
+	}
+
+	case class PositionMode(at: Int) extends ParamMode {
+
+	}
+
+	case class ImmediateMode(value: Int) extends ParamMode {
+
+	}
 }
