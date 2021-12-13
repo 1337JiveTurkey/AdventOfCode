@@ -17,7 +17,7 @@ object Day5 extends Main {
 	val dRegex: Regex = """(\d+),(\d+) -> (\d+),(\d+)""".r
 
 	def star9(): Unit = {
-		val lines = fileLines("Star9.txt")
+		val lines = fileLines("Day5.txt")
 		val parsedLines = (lines flatMap {
 			case vRegex(x, y1, y2) => Some(VLine(x.toInt, Math.min(y1.toInt, y2.toInt) to Math.max(y1.toInt, y2.toInt)))
 			case hRegex(x1, y, x2) => Some(HLine(Math.min(x1.toInt, x2.toInt) to Math.max(x1.toInt, x2.toInt), y.toInt))

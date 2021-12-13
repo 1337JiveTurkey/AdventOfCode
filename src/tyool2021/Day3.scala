@@ -6,7 +6,7 @@ object Day3 extends Main {
 	}
 
 	def star5(): Unit = {
-		val lines = fileLines("Star5.txt")
+		val lines = fileLines("Day3.txt")
 		val bits = 12
 
 		var gamma = 0
@@ -32,7 +32,7 @@ object Day3 extends Main {
 	}
 
 	def star6(): Unit = {
-		val lines = fileLines("Star5.txt")
+		val lines = fileLines("Day3.txt")
 		val bits = 12
 
 		var nextOxy = lines

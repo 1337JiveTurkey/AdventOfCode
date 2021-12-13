@@ -6,7 +6,7 @@ object Day8 extends Main {
 	}
 
 	def star15(): Unit = {
-		val lines = fileLines("Star15.txt")
+		val lines = fileLines("Day8.txt")
 		var total = 0
 		for (line <- lines) {
 			val parts = line.split("""\s\|\s""")
@@ -39,11 +39,11 @@ object Day8 extends Main {
  *
  */
 	def star16(): Unit = {
-		val lines = fileLines("Star15.txt")
+		val lines = fileLines("Day8.txt")
 		for (line <- lines) {
 			val parts = line.split("""\s\|\s""")
+			val input = parts(0).split("\\s").map(Digit)
 			val output = parts(1).split("\\s").map(Digit)
-			for
 		}
 	}
 

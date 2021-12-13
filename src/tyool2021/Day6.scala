@@ -11,7 +11,7 @@ object Day6 extends Main {
 	val digit: Regex = """\d""".r
 
 	def star11(): Unit = {
-		val line = fileLine("Star11.txt")
+		val line = fileLine("Day6.txt")
 		val fish = new Array[Long](9)
 		for (i <- digit.findAllIn(line)) {
 			fish(i.toInt) += 1

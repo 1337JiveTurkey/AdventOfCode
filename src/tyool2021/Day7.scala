@@ -6,7 +6,7 @@ object Day7 extends Main {
 	}
 
 	def star13(): Unit = {
-		val positions = fileNumbers("Star13prime.txt")
+		val positions = fileNumbers("Day7prime.txt")
 		val sorted = positions.sorted
 		val length = positions.length
 		println(length)
@@ -21,7 +21,7 @@ object Day7 extends Main {
 	}
 
 	def star14(): Unit = {
-		val positions = fileNumbers("Star13.txt")
+		val positions = fileNumbers("Day7.txt")
 		val sorted = positions.sorted
 		val length = positions.length
 		val min = positions.min

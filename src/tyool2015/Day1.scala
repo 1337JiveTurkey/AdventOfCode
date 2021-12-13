@@ -6,12 +6,12 @@ object Day1 extends Main {
 	}
 
 	def star1(): Unit = {
-		val line = fileLine("Star1.txt")
+		val line = fileLine("Day1.txt")
 		println(line.count(_ == '(') - line.count(_ == ')'))
 	}
 
 	def star2(): Unit = {
-		val line = fileLine("Star1.txt")
+		val line = fileLine("Day1.txt")
 		var floor = 0
 		var count = 0
 		for (c <- line) {

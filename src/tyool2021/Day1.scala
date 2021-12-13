@@ -6,7 +6,7 @@ object Day1 extends Main {
 	}
 
 	def star2(): Unit = {
-		val lines = fileLines("Star1.txt")
+		val lines = fileLines("Day1.txt")
 		val ints = lines.flatMap(_.toIntOption)
 		val triples = ints.sliding(3)
 		val sums = triples.map(_.sum)

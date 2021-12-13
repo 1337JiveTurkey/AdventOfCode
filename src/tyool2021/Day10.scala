@@ -8,12 +8,12 @@ object Day10 extends Main {
 	}
 
 	def star21(): Unit = {
-		val lines = fileLines("Star21.txt")
+		val lines = fileLines("Day10.txt")
 		println((lines map scoreLine).sum)
 	}
 
 	def star22(): Unit = {
-		val lines = fileLines("Star21.txt")
+		val lines = fileLines("Day10.txt")
 		val scores = lines map scoreIncompleteLine filter (_ != 0)
 		val sorted = scores.sorted
 		println(scores.length)

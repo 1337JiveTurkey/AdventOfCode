@@ -11,7 +11,7 @@ object Day4 extends Main {
 	}
 
 	def star7(): Unit = {
-		val lines = fileLines("Star7.txt")
+		val lines = fileLines("Day4.txt")
 		val calls = lines.head.split(",").map(_.toInt)
 		val cardLines = lines.tail.grouped(6)
 		val cards =
@@ -32,7 +32,7 @@ object Day4 extends Main {
 	}
 
 	def star8(): Unit = {
-		val lines = fileLines("Star7.txt")
+		val lines = fileLines("Day4.txt")
 		val calls = lines.head.split(",").map(_.toInt)
 		val cardLines = lines.tail.grouped(6)
 		val cards =

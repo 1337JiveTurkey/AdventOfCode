@@ -16,7 +16,7 @@ object Day2 extends Main {
 	case class Move(x: Int, y: Int)
 
 	def star4(): Unit = {
-		val lines = fileLines("Star3.txt")
+		val lines = fileLines("Day2.txt")
 		val parsed = lines.map {
 			case forward(distance) => Move(distance.toInt, 0)
 			case up(distance) => Move(0, -distance.toInt)
