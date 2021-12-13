@@ -4,7 +4,7 @@ import scala.util.matching.Regex
 
 object Day5 extends Main {
 	def main(args: Array[String]): Unit = {
-		star9()
+		star10()
 	}
 
 	val threeVowels: Regex = ".*?[aeiou].*?[aeiou].*?[aeiou].*".r
@@ -24,8 +24,29 @@ object Day5 extends Main {
 	}
 
 	def newnice(s: String): Boolean = {
-		for (c <- s) {
+		repeatingPair(s) && threeCharacterCriterion(s)
+	}
 
+	def repeatingPair(s: String): Boolean = {
+		for (i <- 0 until s.length - 3) {
+			val w = s(i)
+			val x = s(i + 1)
+			for(j <- i + 2 until s.length - 1) {
+				val y = s(j)
+				val z = s(j + 1)
+				if (w == y && x == z) {
+					return true
+				}
+			}
+		}
+		false
+	}
+
+	def threeCharacterCriterion(s: String): Boolean = {
+		for ((x, y, z) <- tripwise(s.iterator)) {
+			if (x == z) {
+				return true
+			}
 		}
 		false
 	}
@@ -33,5 +54,10 @@ object Day5 extends Main {
 	def star9(): Unit = {
 		val lines = fileLines("Day5.txt")
 		println(lines count nice)
+	}
+
+	def star10(): Unit = {
+		val lines = fileLines("Day5.txt")
+		println(lines count newnice)
 	}
 }
