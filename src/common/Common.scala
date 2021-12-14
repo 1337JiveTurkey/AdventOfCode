@@ -27,6 +27,11 @@ class Common(dirPrefix: String) {
 		line.split(",").flatMap(_.toIntOption)
 	}
 
+	// Splits a string into a list of 2 character substrings
+	def pairwiseStrings(string: String): Iterator[String] = {
+		string.sliding(2)
+	}
+
 	def pairwise[T](list: Iterator[T]): Iterator[(T, T)] = {
 		list.sliding(2).map(pair => (pair.head, pair.tail.head))
 	}
@@ -41,6 +46,7 @@ class Common(dirPrefix: String) {
 		list.sliding(4).map(pair => (pair.head, pair(1), pair(2), pair(3)))
 	}
 
+	// Pairs split into separate lists, even-odd
 	def halves[T](list: Seq[T]): (Seq[T], Seq[T]) = {
 		list.grouped(2).map(pair => (pair.head, pair.tail.head)).toList.unzip
 	}
@@ -74,5 +80,9 @@ class Common(dirPrefix: String) {
 			retVal += remainder
 		}
 		retVal.result()
+	}
+
+	def countCharacters(input: String): Map[Char, Int] = {
+		input.groupBy(identity).mapValues(_.length).toMap
 	}
 }
