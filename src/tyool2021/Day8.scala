@@ -2,7 +2,7 @@ package tyool2021
 
 object Day8 extends Main {
 	def main(args: Array[String]): Unit = {
-		star15()
+		star16()
 	}
 
 	def star15(): Unit = {
@@ -44,6 +44,7 @@ object Day8 extends Main {
 			val parts = line.split("""\s\|\s""")
 			val input = parts(0).split("\\s").map(Digit)
 			val output = parts(1).split("\\s").map(Digit)
+
 		}
 	}
 
@@ -51,5 +52,9 @@ object Day8 extends Main {
 		val length: Int = chars.length
 		val segments: Set[Char] = Set.from(chars)
 
+		val isTwo: Boolean   = length == 2
+		val isFour: Boolean  = length == 4
+		val isSeven: Boolean = length == 3
+		val isEight: Boolean = length == 7
 	}
 }
