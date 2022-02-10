@@ -85,4 +85,8 @@ class Common(dirPrefix: String) {
 	def countCharacters(input: String): Map[Char, Int] = {
 		input.groupBy(identity).mapValues(_.length).toMap
 	}
+
+	def toDigit(char: Char): Int = {
+		Integer.parseInt(String.valueOf(char))
+	}
 }
