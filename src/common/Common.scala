@@ -64,6 +64,10 @@ class Common(dirPrefix: String) {
 		retVal.result()
 	}
 
+	def repeatForever[T](s: Seq[T]): LazyList[T] = {
+		LazyList.continually(s.to(LazyList)).flatten
+	}
+
 	private lazy val md = MessageDigest.getInstance("MD5")
 	// Generate MD5 hash as a hex string
 	def md5(s: String): String = {
