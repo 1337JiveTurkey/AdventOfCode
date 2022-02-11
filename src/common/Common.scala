@@ -1,8 +1,6 @@
 package common
 
 import java.security.MessageDigest
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 class Common(dirPrefix: String) {
@@ -99,7 +97,7 @@ class Common(dirPrefix: String) {
 		retVal.result()
 	}
 
-	def countCharacters(input: String): Map[Char, Int] = {
+	def countCharacters(input: Seq[Char]): Map[Char, Int] = {
 		input.groupBy(identity).mapValues(_.length).toMap
 	}
 
