@@ -51,6 +51,19 @@ class Common(dirPrefix: String) {
 		list.grouped(2).map(pair => (pair.head, pair.tail.head)).toList.unzip
 	}
 
+	// Distinct pairs of elements from the list
+	def allPairs[T](list: IndexedSeq[T]): IndexedSeq[(T, T)] = {
+		val retVal = IndexedSeq.newBuilder[(T, T)]
+		for (x <- list.indices) {
+			for (y <- list.indices) {
+				if (x != y) {
+					retVal.addOne((list(x), list(y)))
+				}
+			}
+		}
+		retVal.result()
+	}
+
 	private lazy val md = MessageDigest.getInstance("MD5")
 	// Generate MD5 hash as a hex string
 	def md5(s: String): String = {
