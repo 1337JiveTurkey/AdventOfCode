@@ -32,7 +32,7 @@ object Day1 extends Main {
 	}
 
 	def star2(): Unit = {
-		val line = fileLine("Day1prime.txt")
+		val line = fileLine("Day1.txt")
 		val values = line.split(", ")
 		val start: Direction = North
 		var dir = start
@@ -49,15 +49,17 @@ object Day1 extends Main {
 		var x: Int = 0
 		var y: Int = 0
 		for ((direction, distance) <- pairs) {
-			x = x + (direction.x * distance)
-			y = y + (direction.y * distance)
-			val foo = (x, y)
-			if (visited.contains(foo)) {
-				visited.add((x, y))
-				println(s"$direction $distance -> $foo (Duplicate)")
-			} else {
-				println(s"$direction $distance -> $foo")
-				visited.add((x, y))
+			for (d <- 1 to distance) {
+				x = x + direction.x
+				y = y + direction.y
+				val foo = (x, y)
+				if (visited.contains(foo)) {
+					visited.add((x, y))
+					println(s"$direction $distance -> $foo (Duplicate)")
+				} else {
+					println(s"$direction $distance -> $foo")
+					visited.add((x, y))
+				}
 			}
 		}
 	}
