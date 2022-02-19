@@ -6,7 +6,7 @@ import scala.util.matching.Regex
 
 object Day6 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 	val turnOn: Regex = """turn on (\d+),(\d+) through (\d+),(\d+)""".r
 	val turnOff: Regex = """turn off (\d+),(\d+) through (\d+),(\d+)""".r
@@ -27,17 +27,33 @@ object Day6 extends Main {
 			}
 		}
 
+		def operateInt(lights: Grid[Int]): Unit = {
+			for (x <- x1 to x2) {
+				for (y <- y1 to y2) {
+					val current = lights(x, y)
+					lights(x, y) = operateCell(current)
+				}
+			}
+		}
+
 		def operateCell(value: Boolean): Boolean
+		def operateCell(value: Int): Int
 	}
 
 	case class TurnOn(x1: Int, y1: Int, x2: Int, y2: Int) extends Instruction {
 		override def operateCell(value: Boolean): Boolean = true
+
+		override def operateCell(value: Int): Int = value + 1
 	}
 	case class TurnOff(x1: Int, y1: Int, x2: Int, y2: Int) extends Instruction {
 		override def operateCell(value: Boolean): Boolean = false
+
+		override def operateCell(value: Int): Int = Math.max(value - 1, 0)
 	}
 	case class Toggle(x1: Int, y1: Int, x2: Int, y2: Int) extends Instruction {
 		override def operateCell(value: Boolean): Boolean = !value
+
+		override def operateCell(value: Int): Int = value + 2
 	}
 
 	def parseLine(line: String): Instruction = line match {
@@ -54,6 +70,20 @@ object Day6 extends Main {
 			instruction.operate(lights)
 		}
 		val total: Int = lights.contents.count(_ == true)
+		println(total)
+	}
+
+	def star2(): Unit = {
+		val lines = fileLines("Day6.txt")
+		val instructions = lines map parseLine
+		val lights = new Grid[Int](1000, 1000)
+		for (instruction <- instructions) {
+			instruction.operateInt(lights)
+		}
+		var total = 0
+		for (light <- lights.contents) {
+			total = total + light
+		}
 		println(total)
 	}
 }
