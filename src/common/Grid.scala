@@ -11,7 +11,7 @@ import scala.reflect.ClassTag
  * @tparam T Type of the grid
  */
 class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
-	private val contents = new Array[T](width * height)
+	val contents = new Array[T](width * height)
 
 	def apply(x: Int, y: Int): T = contents(x + width * y)
 	def update(x: Int, y: Int, t: T): Unit = contents(x + width * y) = t
