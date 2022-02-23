@@ -20,7 +20,7 @@ object Day8 extends Main {
 	}
 
 	def star16(): Unit = {
-		val lines = fileLines("Day8prime.txt")
+		val lines = fileLines("Day8.txt")
 		var total = 0
 		for (line <- lines) {
 			val parts = line.split("""\s\|\s""")
@@ -31,15 +31,15 @@ object Day8 extends Main {
 			organizeDigits(input)
 
 			var remaining = Set.from(input)
-			var deduced: Set[Digit] = Set.empty
+			var deduced: Set[Int] = Set.empty
 			while (remaining.nonEmpty) {
 				val remainingBuilder = Set.newBuilder[Digit]
 				for (digit <- remaining) {
-					if (!digit.attemptDeduction()) {
+					if (!digit.attemptDeduction(deduced)) {
 						remainingBuilder.addOne(digit)
 					}
 					else {
-						deduced = deduced + digit
+						deduced = deduced + digit.value
 					}
 				}
 				remaining = remainingBuilder.result()
@@ -131,7 +131,7 @@ object Day8 extends Main {
 		 * 2 is all that's left
 		 *
 		 */
-		def attemptDeduction(): Boolean = {
+		def attemptDeduction(deduced: Set[Int]): Boolean = {
 			if (length == 2) {
 				value = 1
 			} else if (length == 4) {
@@ -144,10 +144,10 @@ object Day8 extends Main {
 				if (subsetsContain(4)) {
 					value = 9
 				}
-				else if (subsetsContain(7)) {
+				else if (subsetsContain(7) && deduced(9)) {
 					value = 0
 				}
-				else if (!subsetsContain(7) && !subsetsContain(4)) {
+				else if (deduced(9) && deduced(0)) {
 					value = 6
 				}
 			} else if (length == 5) {
@@ -155,12 +155,11 @@ object Day8 extends Main {
 					value = 3
 				} else if (supersetsContain(6)) {
 					value = 5
-				} else if (!subsetsContain(7) && !supersetsContain(6)) {
+				} else if (deduced(3) && deduced(5)) {
 					value = 2
 				}
 			}
-
-			deduced
+			this.deduced
 		}
 	}
 }
