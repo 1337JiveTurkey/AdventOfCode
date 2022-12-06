@@ -7,7 +7,7 @@ class Intcode(init: String) extends Iterator[String] {
 	val mem: mutable.Buffer[Int] = {
 		val source = init.split(",").flatMap(_.toIntOption).toBuffer
 		// Include an extra 1000 ints of space
-		source.appendAll(new ArrayBuffer[Int](1000))
+		source.appendAll(new Array[Int](1000))
 	}
 	val input: mutable.Queue[Int] = mutable.Queue[Int]()
 	val output: mutable.Queue[Int] = mutable.Queue[Int]()
@@ -46,6 +46,10 @@ class Intcode(init: String) extends Iterator[String] {
 			case 2 => Multiply(at, param1, param2, param3)
 			case 3 => Input(at, param1)
 			case 4 => Output(at, param1)
+			case 5 => JumpIfTrue(at, param1, param2)
+			case 6 => JumpIfFalse(at, param1, param2)
+			case 7 => LessThan(at, param1, param2, param3)
+			case 8 => Equals(at, param1, param2, param3)
 			case 99 => Terminate(at)
 			case invalid => Invalid(at, invalid)
 		}
@@ -72,23 +76,23 @@ class Intcode(init: String) extends Iterator[String] {
 		def op(): String
 	}
 
-	case class Add(override val at: Int, read1: ParamMode, read2: ParamMode, write: ParamMode) extends OpCode(at, 1, "ADD", 4) {
+	case class Add(override val at: Int, first: ParamMode, second: ParamMode, result: ParamMode) extends OpCode(at, 1, "ADD", 4) {
 		override def op(): String = {
-			val value1 = read1.read()
-			val value2 = read2.read()
-			val result = value1 + value2
-			write.write(result)
-			header + s"$result (@$write) = $value1 (@$read1) + $value2 (@$read2)"
+			val value1 = first.read()
+			val value2 = second.read()
+			val sum = value1 + value2
+			result.write(sum)
+			header + s"$sum (@$result) = $value1 (@$first) + $value2 (@$second)"
 		}
 	}
 
-	case class Multiply(override val at: Int, read1: ParamMode, read2: ParamMode, write: ParamMode) extends OpCode(at, 2, "MUL", 4) {
+	case class Multiply(override val at: Int, first: ParamMode, second: ParamMode, result: ParamMode) extends OpCode(at, 2, "MUL", 4) {
 		override def op(): String = {
-			val value1 = read1.read()
-			val value2 = read2.read()
-			val result = value1 * value2
-			write.write(result)
-			header + s"$result (@$write) = $value1 (@$read1) * $value2 (@$read2)"
+			val value1 = first.read()
+			val value2 = second.read()
+			val product = value1 * value2
+			result.write(product)
+			header + s"$product (@$result) = $value1 (@$first) * $value2 (@$second)"
 		}
 	}
 
@@ -105,6 +109,56 @@ class Intcode(init: String) extends Iterator[String] {
 			val value = read.read()
 			output.enqueue(value)
 			header + s"(Output) = $value (@$read)"
+		}
+	}
+
+	case class JumpIfTrue(override val at: Int, cond: ParamMode, target: ParamMode) extends OpCode(at, 5, "JIT", 3) {
+
+		override def op(): String = {
+			val condValue = cond.read()
+			val targetValue = target.read()
+			if (condValue != 0) {
+				pc = targetValue
+			}
+			header
+		}
+	}
+
+	case class JumpIfFalse(override val at: Int, cond: ParamMode, target: ParamMode) extends OpCode(at, 6, "JIF", 3) {
+
+		override def op(): String = {
+			val condValue = cond.read()
+			val targetValue = target.read()
+			if (condValue == 0) {
+				pc = targetValue
+			}
+			header
+		}
+	}
+
+	case class LessThan(override val at: Int, first: ParamMode, second: ParamMode, result: ParamMode) extends OpCode(at, 7, "LTT", 4) {
+		override def op(): String = {
+			val read1 = first.read()
+			val read2 = second.read()
+			if (read1 < read2) {
+				result.write(1)
+			} else {
+				result.write(0)
+			}
+			header
+		}
+	}
+
+	case class Equals(override val at: Int, first: ParamMode, second: ParamMode, result: ParamMode) extends OpCode(at, 8, "EQL", 4) {
+		override def op(): String = {
+			val read1 = first.read()
+			val read2 = second.read()
+			if (read1 == read2) {
+				result.write(1)
+			} else {
+				result.write(0)
+			}
+			header
 		}
 	}
 
