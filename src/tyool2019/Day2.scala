@@ -2,7 +2,7 @@ package tyool2019
 
 object Day2 extends Main {
 	def main(args: Array[String]): Unit = {
-		star4()
+		star3()
 	}
 
 	def star3(): Unit = {
@@ -22,6 +22,7 @@ object Day2 extends Main {
 				intcode.mem(1) = i
 				intcode.mem(2) = j
 				for (line <- intcode) {
+					// println(line)
 					// Run silently
 				}
 				val result = intcode.mem(0)

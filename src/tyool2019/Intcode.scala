@@ -1,26 +1,33 @@
 package tyool2019
 
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 class Intcode(init: String) extends Iterator[String] {
-	val mem: mutable.Buffer[Int] = init.split(",").flatMap(_.toIntOption).toBuffer
+	val mem: mutable.Buffer[Int] = {
+		val source = init.split(",").flatMap(_.toIntOption).toBuffer
+		// Include an extra 1000 ints of space
+		source.appendAll(new ArrayBuffer[Int](1000))
+	}
 	val input: mutable.Queue[Int] = mutable.Queue[Int]()
 	val output: mutable.Queue[Int] = mutable.Queue[Int]()
 
-	// We're decoding beforehand so we can play nice with hasNext
-	var nextOp: OpCode = decode(0)
-	var pc: Int = nextOp.length
+	var pc: Int = 0
 
-	override def hasNext: Boolean = !nextOp.isTerminal
+	var terminated = false
+
+	override def hasNext: Boolean = !terminated
 
 	override def next(): String = {
-		val executing = nextOp
-		// Keep the same terminal operation
-		if (hasNext) {
-			nextOp = decode(pc)
-			pc += nextOp.length
+		if (terminated) {
+			throw new IllegalStateException("Intcode instance is terminated")
 		}
-		executing.op()
+		var nextOp = decode(pc)
+		pc += nextOp.length
+		if (nextOp.isTerminal) {
+			terminated = true
+		}
+		nextOp.op()
 	}
 
 	private def decode(at: Int): OpCode = {
@@ -30,13 +37,25 @@ class Intcode(init: String) extends Iterator[String] {
 		val flag2 = (op / 1000) % 10
 		val flag3 = (op / 10000) % 10
 
+		val param1 = decodeParameter(flag1, at + 1)
+		val param2 = decodeParameter(flag2, at + 2)
+		val param3 = decodeParameter(flag3, at + 3)
+
 		instruction match {
-			case 1 => Add(at, mem(at + 1), mem(at + 2), mem(at + 3))
-			case 2 => Multiply(at, mem(at + 1), mem(at + 2), mem(at + 3))
-			case 3 => Input(at, mem(at + 1))
-			case 4 => Output(at, mem(at + 1))
+			case 1 => Add(at, param1, param2, param3)
+			case 2 => Multiply(at, param1, param2, param3)
+			case 3 => Input(at, param1)
+			case 4 => Output(at, param1)
 			case 99 => Terminate(at)
-			case invalid => Invalid(invalid, at)
+			case invalid => Invalid(at, invalid)
+		}
+	}
+
+	private def decodeParameter(flag: Int, at: Int): ParamMode = {
+		flag match {
+			case 0 => PositionMode(mem(at))
+			case 1 => ImmediateMode(mem(at))
+			case invalid => InvalidMode(invalid)
 		}
 	}
 
@@ -45,40 +64,45 @@ class Intcode(init: String) extends Iterator[String] {
 		def header: String = s" $name (@$at): "
 		val isTerminal = false;
 
+		/**
+		 * Performs the operation of the OpCode and returns a string representation.
+		 *
+		 * @return String representation of what the operation is doing.
+		 */
 		def op(): String
 	}
 
-	case class Add(override val at: Int, read1: Int, read2: Int, write: Int) extends OpCode(at, 1, "ADD", 4) {
+	case class Add(override val at: Int, read1: ParamMode, read2: ParamMode, write: ParamMode) extends OpCode(at, 1, "ADD", 4) {
 		override def op(): String = {
-			val value1 = mem(read1)
-			val value2 = mem(read2)
+			val value1 = read1.read()
+			val value2 = read2.read()
 			val result = value1 + value2
-			mem(write) = result
+			write.write(result)
 			header + s"$result (@$write) = $value1 (@$read1) + $value2 (@$read2)"
 		}
 	}
 
-	case class Multiply(override val at: Int, read1: Int, read2: Int, write: Int) extends OpCode(at, 2, "MUL", 4) {
+	case class Multiply(override val at: Int, read1: ParamMode, read2: ParamMode, write: ParamMode) extends OpCode(at, 2, "MUL", 4) {
 		override def op(): String = {
-			val value1 = mem(read1)
-			val value2 = mem(read2)
+			val value1 = read1.read()
+			val value2 = read2.read()
 			val result = value1 * value2
-			mem(write) = result
+			write.write(result)
 			header + s"$result (@$write) = $value1 (@$read1) * $value2 (@$read2)"
 		}
 	}
 
-	case class Input(override val at: Int, write: Int) extends OpCode(at, 3, "INP", 2) {
+	case class Input(override val at: Int, write: ParamMode) extends OpCode(at, 3, "INP", 2) {
 		override def op(): String = {
 			val value = input.dequeue()
-			mem(write) = value
+			write.write(value)
 			header + s"@$write = $value (Input)"
 		}
 	}
 
-	case class Output(override val at: Int, read: Int) extends OpCode(at, 4, "OUT", 2) {
+	case class Output(override val at: Int, read: ParamMode) extends OpCode(at, 4, "OUT", 2) {
 		override def op(): String = {
-			val value = mem(read)
+			val value = read.read()
 			output.enqueue(value)
 			header + s"(Output) = $value (@$read)"
 		}
@@ -96,14 +120,25 @@ class Intcode(init: String) extends Iterator[String] {
 	}
 
 	abstract class ParamMode {
-
+		def read(): Int
+		def write(value: Int): Unit
 	}
 
 	case class PositionMode(at: Int) extends ParamMode {
+		override def read(): Int = mem(at)
 
+		override def write(value: Int): Unit = mem(at) = value
 	}
 
 	case class ImmediateMode(value: Int) extends ParamMode {
+		override def read(): Int = value
 
+		override def write(value: Int): Unit = throw new NoSuchMethodException("Can't write an immediate parameter")
+	}
+
+	case class InvalidMode(flag: Int) extends ParamMode {
+		override def read(): Int = throw new NoSuchMethodException("Can't read an invalid parameter")
+
+		override def write(value: Int): Unit = throw new NoSuchMethodException("Can't write an invalid parameter")
 	}
 }
