@@ -7,17 +7,77 @@ import scala.reflect.ClassTag
  *
  * @param width Width of the grid
  * @param height Height of the grid
- * @param classTag$T$0 Type of the underlying storage array
  * @tparam T Type of the grid
  */
 class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
-	val contents = new Array[T](width * height)
+	val xIndices: Range = 0 until width
+	val yIndices: Range = 0 until height
 
-	def apply(x: Int, y: Int): T = contents(x + width * y)
-	def update(x: Int, y: Int, t: T): Unit = contents(x + width * y) = t
+	private val contents = new Array[T](width * height)
+
+	private def inRange(x: Int, y: Int): Boolean = xIndices.contains(x) && yIndices.contains(y)
+	private def address(x: Int, y: Int): Int = {
+		if (inRange(x, y)) {
+			x + width * y
+		} else {
+			throw new IllegalArgumentException(s"$x not in $xIndices or $y not in $yIndices")
+		}
+	}
+
+	def apply(x: Int, y: Int): T = contents(address(x, y))
+	def update(x: Int, y: Int, t: T): Unit = contents(address(x, y)) = t
 
 	override def iterator: Iterator[T] = contents.iterator
+
+	def cell(x: Int, y: Int): Cell = Cell(x, y)
+
+	def cells: Iterable[Cell] = {
+		for (x <- xIndices; y <- yIndices) yield cell(x, y)
+	}
+
+	/**
+	 * A container for cell values that includes its coordinates, ability to see
+	 * its neighbors and other common extensions.
+	 *
+	 * @param x The x coordinate of the cell
+	 * @param y The y coordinate of the cell
+	 */
+	case class Cell(x: Int, y: Int) {
+		def value: T = contents(address(x, y))
+
+		def value_=(t: T): Unit = contents(address(x, y)) = t
+
+		def get(d: Direction): Option[Cell] = {
+			val x = d.dx + this.x
+			val y = d.dy + this.y
+			if (inRange(x, y)) {
+				Some(cell(x, y))
+			} else {
+				None
+			}
+		}
+
+		/**
+		 *
+		 * @param d The direction to look for cells
+		 * @return All cells in the direction given, from nearest to furthest
+		 */
+		def ray(d: Direction): List[Cell] = {
+			val cell = get(d)
+			if (cell.isDefined) {
+				val tail = cell.get.ray(d)
+				cell.get :: tail
+			} else {
+				List.empty
+			}
+		}
+
+		def onEdge: Boolean = {
+			x == 0 || y == 0 || x == width - 1 || y == height - 1
+		}
+	}
 }
+
 
 object Grid {
 	/**
@@ -31,24 +91,13 @@ object Grid {
 	 * @tparam T The type of the grid produced
 	 * @return The constructed grid
 	 */
-	def apply[T: ClassTag](lines: Seq[String])(transform: (Char) => T): Grid[T] = {
+	def apply[T: ClassTag](lines: Seq[String])(transform: Char => T): Grid[T] = {
 		val height = lines.length
 		val width = lines.head.length
 		val retVal = new Grid[T](width, height)
 		for ((line, y) <- lines.zipWithIndex) {
 			for((char, x) <- line.zipWithIndex) {
 				retVal(x, y) = transform(char)
-			}
-		}
-		retVal
-	}
-	def withCoordinates[T: ClassTag](lines: Seq[String])(transform: (Int, Int, Char) => T): Grid[T] = {
-		val height = lines.length
-		val width = lines.head.length
-		val retVal = new Grid[T](width, height)
-		for ((line, y) <- lines.zipWithIndex) {
-			for((char, x) <- line.zipWithIndex) {
-				retVal(x, y) = transform(x, y, char)
 			}
 		}
 		retVal

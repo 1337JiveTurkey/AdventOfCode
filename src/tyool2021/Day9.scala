@@ -1,6 +1,6 @@
 package tyool2021
 
-import common.Grid
+import common.{DirectionSet, Grid}
 
 object Day9 extends Main {
 	def main(args: Array[String]): Unit = {
@@ -9,14 +9,12 @@ object Day9 extends Main {
 
 	def star1(): Unit = {
 		val lines = fileLines("Day9.txt")
-		val grid: Grid[Cell] = Grid.withCoordinates(lines)(Cell)
-	}
+		val grid: Grid[Int] = Grid(lines)(toDigit)
+		for (cell <- grid.cells) {
+			for {direction <- DirectionSet.Cardinals
+			     Some(otherCell) = cell.get(direction)} {
 
-	class Cell(val x: Int, val y: Int, val level: Int) {
-	}
-
-	// Just because I think it makes the syntax more pretty
-	object Cell extends ((Int, Int, Char) => Cell) {
-		def apply(x: Int, y: Int, c: Char): Cell = new Cell(x, y, c.toInt)
+			}
+		}
 	}
 }

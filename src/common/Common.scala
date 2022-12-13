@@ -1,6 +1,7 @@
 package common
 
 import java.security.MessageDigest
+import scala.collection.mutable
 import scala.io.Source
 
 class Common(dirPrefix: String) {
@@ -70,7 +71,7 @@ class Common(dirPrefix: String) {
 	// Generate MD5 hash as a hex string
 	def md5(s: String): String = {
 		val a = md.digest(s.getBytes)
-		val sb = new StringBuilder(a.length * 2)
+		val sb = new mutable.StringBuilder(a.length * 2)
 		for (b <- a) {
 			sb.append(String.format("%02x", b))
 		}
@@ -98,7 +99,7 @@ class Common(dirPrefix: String) {
 	}
 
 	def countCharacters(input: Seq[Char]): Map[Char, Int] = {
-		input.groupBy(identity).mapValues(_.length).toMap
+		input.groupBy(identity).view.mapValues(_.length).toMap
 	}
 
 	def toDigit(char: Char): Int = {

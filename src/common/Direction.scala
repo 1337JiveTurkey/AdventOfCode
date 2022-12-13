@@ -44,6 +44,18 @@ object Direction {
 		case other => throw new IndexOutOfBoundsException("Value = " + other)
 	}
 
+	def fromMask(mask: Int): Direction = mask match {
+		case 1   => North
+		case 2   => Northeast
+		case 4   => East
+		case 8   => Southeast
+		case 16  => South
+		case 32  => Southwest
+		case 64  => West
+		case 128 => Northwest
+		case other => throw new IndexOutOfBoundsException("Value = " + other)
+	}
+
 	/**
 	 * Turns a difference in coordinates into the relative direction.
 	 *
@@ -70,10 +82,21 @@ object Direction {
  *
  * @param directions All the direction bit values or'd together
  */
-class DirectionSet(val directions: Int) extends AnyVal {
+class DirectionSet(val directions: Int) extends AnyVal with IterableOnce[Direction] {
 	def contains(d: Direction): Boolean = (d != null) && (d.bitMask & directions) != 0
 	def apply(d: Direction): Boolean = contains(d)
 	def isEmpty: Boolean = directions == 0
+	def size: Int = Integer.bitCount(directions)
+
+	def head: Direction = Direction.fromMask(Integer.highestOneBit(directions))
+
+	def tail: DirectionSet = {
+		if (isEmpty) {
+			this
+		} else {
+			new DirectionSet(directions & ~Integer.highestOneBit(directions))
+		}
+	}
 
 	def foreach[U](f: Direction => U): Unit = {
 		if (contains(North))      f(North)
@@ -130,6 +153,20 @@ class DirectionSet(val directions: Int) extends AnyVal {
 			s += d.relative(Back)
 		}
 		s.result()
+	}
+
+	override def iterator: Iterator[Direction] = new Iterator[Direction] {
+		var set: DirectionSet = new DirectionSet(directions)
+		override def hasNext: Boolean = !set.isEmpty
+
+		override def next(): Direction = {
+			val oldSet = set
+			if (set.isEmpty) {
+				throw new IllegalStateException("Empty iterator")
+			}
+			set = set.tail
+			oldSet.head
+		}
 	}
 }
 
