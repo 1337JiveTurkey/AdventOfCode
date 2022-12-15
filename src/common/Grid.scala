@@ -15,9 +15,9 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 
 	private val contents = new Array[T](width * height)
 
-	private def inRange(x: Int, y: Int): Boolean = xIndices.contains(x) && yIndices.contains(y)
+	private def onGrid(x: Int, y: Int): Boolean = xIndices.contains(x) && yIndices.contains(y)
 	private def address(x: Int, y: Int): Int = {
-		if (inRange(x, y)) {
+		if (onGrid(x, y)) {
 			x + width * y
 		} else {
 			throw new IllegalArgumentException(s"$x not in $xIndices or $y not in $yIndices")
@@ -47,18 +47,21 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 
 		def value_=(t: T): Unit = contents(address(x, y)) = t
 
+		/**
+		 * Gets the cell in the given direction
+		 * @param d The direction to get the cell from.
+		 * @return Some(cell) if there is a cell in that direction or else None
+		 */
 		def get(d: Direction): Option[Cell] = {
-			val x = d.dx + this.x
-			val y = d.dy + this.y
-			if (inRange(x, y)) {
-				Some(cell(x, y))
+			if (onGrid(x + d.dx, y + d.dy)) {
+				Some(cell(x + d.dx, y + d.dy))
 			} else {
 				None
 			}
 		}
 
 		/**
-		 *
+		 * Gets all the cells in a given direction to the edge of the grid
 		 * @param d The direction to look for cells
 		 * @return All cells in the direction given, from nearest to furthest
 		 */
@@ -72,8 +75,25 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 			}
 		}
 
+		/**
+		 *
+		 * @return True if this is on any edge of the grid
+		 */
 		def onEdge: Boolean = {
 			x == 0 || y == 0 || x == width - 1 || y == height - 1
+		}
+
+		/**
+		 *
+		 * @return The set of directions that are still on the grid
+		 */
+		def validDirections: DirectionSet = {
+			// Don't bother filtering if there's nothing to filter
+			if (!onEdge) {
+				DirectionSet.All
+			} else {
+				DirectionSet.All.filter(d => onGrid(x + d.dx, y + d.dy))
+			}
 		}
 	}
 }
