@@ -42,7 +42,7 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 	 * @param x The x coordinate of the cell
 	 * @param y The y coordinate of the cell
 	 */
-	case class Cell(x: Int, y: Int) {
+	case class Cell(x: Int, y: Int) extends Point {
 		def value: T = contents(address(x, y))
 
 		def value_=(t: T): Unit = contents(address(x, y)) = t

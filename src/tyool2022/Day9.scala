@@ -1,6 +1,6 @@
 package tyool2022
 
-import common.{Direction, East, Grid, North, South, West}
+import common.{Direction, East, Grid, North, Point, South, West}
 
 import scala.util.matching.Regex
 
@@ -56,7 +56,7 @@ object Day9 extends Main {
 	}
 
 
-	class Rope(var x: Int, var y: Int, length: Int) {
+	class Rope(var x: Int, var y: Int, length: Int) extends Point {
 		val next: Rope = {
 			if (length > 1) {
 				new Rope(x, y, length - 1)
