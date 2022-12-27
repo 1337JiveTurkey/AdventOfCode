@@ -7,27 +7,29 @@ object Day10 extends Main {
 		star2()
 	}
 
-	val AddxPattern: Regex = """addx (-?\d+)""".r
-	val NoopPattern: Regex = """noop""".r
+	private val AddxPattern: Regex = """addx (-?\d+)""".r
+	private val NoopPattern: Regex = """noop""".r
+
+	private def genSequence(lines: IndexedSeq[String]): IndexedSeq[Int] = {
+		val outputBuilder = IndexedSeq.newBuilder[Int]
+		var xRegister = 1
+		outputBuilder.addOne(xRegister)
+		for (line <- lines) line match {
+			case AddxPattern(amount) =>
+				val toAdd = amount.toInt
+				// Delay Slot
+				outputBuilder.addOne(xRegister)
+				xRegister += toAdd
+				outputBuilder.addOne(xRegister)
+			case NoopPattern() => outputBuilder.addOne(xRegister)
+		}
+		outputBuilder.result()
+	}
 
 	def star1(): Unit = {
 		val lines = fileLines("Day10.txt")
-		val outputBuilder = IndexedSeq.newBuilder[Int]
-		var latest = 1
-		outputBuilder.addOne(latest)
-		outputBuilder.addOne(latest)
-		for (line <- lines) line match {
-			case AddxPattern(amount) => {
-				val toAdd = amount.toInt
-				// Delay Slot
-				outputBuilder.addOne(latest)
-				latest += toAdd
-				outputBuilder.addOne(latest)
-			}
-			case NoopPattern() => outputBuilder.addOne(latest)
-		}
+		val output: IndexedSeq[Int] = genSequence(lines)
 		var sum = 0
-		val output = outputBuilder.result()
 		for (i <- 20 to 220 by 40) {
 			sum += i * output(i)
 			println(i * output(i))
@@ -36,24 +38,10 @@ object Day10 extends Main {
 	}
 
 	def star2(): Unit = {
-		val lines = fileLines("Day10Prime.txt")
-		val outputBuilder = IndexedSeq.newBuilder[Int]
-		var latest = 1
-		outputBuilder.addOne(latest)
-		outputBuilder.addOne(latest)
-		for (line <- lines) line match {
-			case AddxPattern(amount) => {
-				val toAdd = amount.toInt
-				// Delay Slot
-				outputBuilder.addOne(latest)
-				latest += toAdd
-				outputBuilder.addOne(latest)
-			}
-			case NoopPattern() => outputBuilder.addOne(latest)
-		}
-		val output = outputBuilder.result()
+		val lines = fileLines("Day10.txt")
+		val output: IndexedSeq[Int] = genSequence(lines)
 		for (y <- 0 to 5) {
-			for(x <- 0 until 40) {
+			for(x <- 0 to 40) {
 				val spriteCenter = output(40 * y + x)
 				val sprite = (spriteCenter - 1) to (spriteCenter + 1)
 				if (sprite.contains(x)) {
