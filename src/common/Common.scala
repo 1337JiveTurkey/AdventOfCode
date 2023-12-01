@@ -102,7 +102,47 @@ class Common(dirPrefix: String) {
 		input.groupBy(identity).view.mapValues(_.length).toMap
 	}
 
+	/**
+	 *
+	 * @param char The character to turn into a digit.
+	 * @return The character as a digit.
+	 */
 	def toDigit(char: Char): Int = {
 		Integer.parseInt(String.valueOf(char))
 	}
+
+	/**
+	 *
+	 * @param n The number to find the digits of.
+	 * @return The digits of the given number from least significant to most.
+	 */
+	def digits(n: Int): List[Int] = {
+		if (n == 0) {
+			return List(0)
+		}
+		val lb = List.newBuilder[Int]
+		var r = n
+		while (r != 0) {
+			lb.addOne(r % 10)
+			r = r / 10
+		}
+		lb.result()
+	}
+
+	/**
+	 *
+	 * @param n The number to get the bits of.
+	 * @return The numbers of the bits turned on for the given number.
+	 */
+	def bits(n: Int): List[Int] = {
+		var l: List[Int] = Nil
+		for (i <- (0 until 32).reverse) {
+			val bit: Int = 1 << i
+			if ((n & bit) > 0) {
+				l = i :: l
+			}
+		}
+		l
+	}
+
 }

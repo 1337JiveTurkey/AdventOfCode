@@ -25,3 +25,5 @@ trait Point {
 	 */
 	def chebyshevTo(p: Point): Int = Math.max(Math.abs(x - p.x), Math.abs(y - p.y))
 }
+
+case class PointAt(x: Int, y: Int) extends Point
