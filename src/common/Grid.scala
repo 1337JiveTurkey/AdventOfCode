@@ -144,12 +144,19 @@ trait Cell[T] extends Point {
 		}
 	}
 
-	def neighbors: List[Cell[T]] = {
-		val dirs = validDirections
+	/**
+	 * Gets all the neighbors in the given directions.
+	 *
+	 * @param dirs The DirectionSet to get the cells in the direction of
+	 * @return The cells adjacent to the current cell.
+	 */
+	def neighbors(dirs: DirectionSet): List[Cell[T]] = {
 		var cells: List[Cell[T]] = List.empty
-		dirs.foreach(dir => {
+		(validDirections & dirs).foreach(dir => {
 			cells = get(dir).get :: cells
 		})
 		cells
 	}
+
+	def neighbors: List[Cell[T]] = neighbors(DirectionSet.All)
 }

@@ -8,13 +8,18 @@ object Day9 extends Main {
 	}
 
 	def star1(): Unit = {
+		var total = 0
 		val lines = fileLines("Day9.txt")
 		val grid: Grid[Int] = Grid(lines)(toDigit)
 		for (cell <- grid.cells) {
-			for {direction <- DirectionSet.Cardinals
-			     Some(otherCell) = cell.get(direction)} {
-
+			val safety = cell.value + 1
+			val neighbors = cell.neighbors(DirectionSet.Cardinals)
+			// This is the low point if no neighbor has a cell height less than or equal to this cell
+			val lowPoint = !neighbors.exists(neighbor => neighbor.value <= cell.value)
+			if (lowPoint) {
+				total += safety
 			}
 		}
+		println(total)
 	}
 }
