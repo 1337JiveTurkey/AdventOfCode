@@ -29,10 +29,10 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 
 	override def iterator: Iterator[T] = contents.iterator
 
-	def cell(x: Int, y: Int): Cell = Cell(x, y)
+	def cell(x: Int, y: Int): Cell[T] = CellImpl(x, y)
 
-	def cells: Iterable[Cell] = {
-		for (x <- xIndices; y <- yIndices) yield cell(x, y)
+	def cells: Iterable[Cell[T]] = {
+		for (y <- yIndices; x <- xIndices) yield cell(x, y)
 	}
 
 	/**
@@ -42,36 +42,16 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 	 * @param x The x coordinate of the cell
 	 * @param y The y coordinate of the cell
 	 */
-	case class Cell(x: Int, y: Int) extends Point {
+	private case class CellImpl(x: Int, y: Int) extends Cell[T] {
 		def value: T = contents(address(x, y))
 
 		def value_=(t: T): Unit = contents(address(x, y)) = t
 
-		/**
-		 * Gets the cell in the given direction
-		 * @param d The direction to get the cell from.
-		 * @return Some(cell) if there is a cell in that direction or else None
-		 */
-		def get(d: Direction): Option[Cell] = {
+		def get(d: Direction): Option[Cell[T]] = {
 			if (onGrid(x + d.dx, y + d.dy)) {
 				Some(cell(x + d.dx, y + d.dy))
 			} else {
 				None
-			}
-		}
-
-		/**
-		 * Gets all the cells in a given direction to the edge of the grid
-		 * @param d The direction to look for cells
-		 * @return All cells in the direction given, from nearest to furthest
-		 */
-		def ray(d: Direction): List[Cell] = {
-			val cell = get(d)
-			if (cell.isDefined) {
-				val tail = cell.get.ray(d)
-				cell.get :: tail
-			} else {
-				List.empty
 			}
 		}
 
@@ -121,5 +101,55 @@ object Grid {
 			}
 		}
 		retVal
+	}
+}
+
+/**
+ * An individual cell on a grid with various operations to access its neighbors.
+ *
+ * @tparam T The type of data stored within the cell.
+ */
+trait Cell[T] extends Point {
+	def value: T
+
+	def value_=(t: T): Unit
+
+	/**
+	 * Gets the cell in the given direction
+	 *
+	 * @param d The direction to get the cell from.
+	 * @return Some(cell) if there is a cell in that direction or else None
+	 */
+	def get(d: Direction): Option[Cell[T]]
+
+	/**
+	 *
+	 * @return The set of directions that are still on the grid
+	 */
+	def validDirections: DirectionSet
+
+	/**
+	 * Gets all the cells in a given direction to the edge of the grid
+	 *
+	 * @param d The direction to look for cells
+	 * @return All cells in the direction given, from nearest to furthest
+	 */
+	def ray(d: Direction): List[Cell[T]] = {
+		val cell = get(d)
+		if (cell.isDefined) {
+			val tail = cell.get.ray(d)
+			cell.get :: tail
+		} else {
+			List.empty
+		}
+	}
+
+	def neighbors: List[Cell[T]] = {
+		val dirs = validDirections
+		var cells: List[Cell[T]] = List.empty
+		dirs.foreach(dir => {
+			cells = get(dir).get :: cells
+		})
+		cells
 	}
 }
