@@ -26,6 +26,10 @@ class Common(dirPrefix: String) {
 		line.split(",").flatMap(_.toIntOption)
 	}
 
+	def whitespaceDividedNumbers(line: String): IndexedSeq[Int] = {
+		line.split("\\s+").flatMap(_.toIntOption)
+	}
+
 	// Splits a string into a list of 2 character substrings
 	def pairwiseStrings(string: String): Iterator[String] = {
 		string.sliding(2)
