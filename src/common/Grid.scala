@@ -55,10 +55,6 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 			}
 		}
 
-		/**
-		 *
-		 * @return True if this is on any edge of the grid
-		 */
 		def onEdge: Boolean = {
 			x == 0 || y == 0 || x == width - 1 || y == height - 1
 		}
@@ -121,6 +117,12 @@ trait Cell[T] extends Point {
 	 * @return Some(cell) if there is a cell in that direction or else None
 	 */
 	def get(d: Direction): Option[Cell[T]]
+
+	/**
+	 *
+	 * @return True if this is on any edge of the grid
+	 */
+	def onEdge: Boolean
 
 	/**
 	 *
