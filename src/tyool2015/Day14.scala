@@ -27,12 +27,12 @@ object Day14 extends Main {
 	}
 
 	def star2(): Unit = {
-		val lines = fileLines("Day14Prime.txt")
+		val lines = fileLines("Day14.txt")
 		val reindeer = lines map {
 			case reindeerPattern(name, speed, onTime, offTime) =>
 				Reindeer(name, speed.toInt, onTime.toInt, offTime.toInt)
 		}
-		for (t <- 1 to 1000) {
+		for (t <- 1 to totalTime) {
 			var bestDistance = 0
 			for (r <- reindeer) {
 				val distance = r.simulate()
@@ -67,10 +67,10 @@ object Day14 extends Main {
 			}
 			else if (offTimeRemaining > 0) {
 				offTimeRemaining -= 1
-			}
-			else {
-				onTimeRemaining = onTime
-				offTimeRemaining = offTime
+				if (offTimeRemaining == 0) {
+					onTimeRemaining = onTime
+					offTimeRemaining = offTime
+				}
 			}
 			distance
 		}
