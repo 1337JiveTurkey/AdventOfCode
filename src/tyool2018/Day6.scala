@@ -6,7 +6,7 @@ import scala.util.matching.Regex
 
 object Day6 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 
 	val LinePattern: Regex = """(\d+), (\d+)""".r
@@ -49,7 +49,24 @@ object Day6 extends Main {
 		}
 	}
 
-	case class Region(x: Int, y: Int) extends Point {
+	def star2(): Unit = {
+		val lines = fileLines("Day6.txt")
+		val regionsBuilder = List.newBuilder[Region]
+		for (LinePattern(x, y) <- lines) {
+			regionsBuilder.addOne(Region(x.toInt, y.toInt))
+		}
+		val regions = regionsBuilder.result()
+		println(regions)
+		val grid = new Grid[Int](500, 500)
+
+		for (cell <- grid.cells) {
+			val totalDistance = regions.map(cell manhattanTo _).sum
+			cell.value = totalDistance
+		}
+		println(grid.cells.count(_.value < 10000))
+	}
+
+		case class Region(x: Int, y: Int) extends Point {
 		var isInfinite = false
 		var size = 0
 	}
