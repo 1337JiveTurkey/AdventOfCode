@@ -6,7 +6,7 @@ import scala.util.matching.Regex
 
 object Day8 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 
 	val rectLine: Regex = """rect (\d+)x(\d+)""".r
@@ -27,6 +27,22 @@ object Day8 extends Main {
 		println(screen.count(identity))
 	}
 
+	def star2(): Unit = {
+		def lines = fileLines("Day8.txt")
+
+		def commands: IndexedSeq[Command] = lines map {
+			case rectLine(x, y) => Rect(x.toInt, y.toInt)
+			case rotateRowLine(y, by) => RotRow(y.toInt, by.toInt)
+			case rotateColumnLine(x, by) => RotCol(x.toInt, by.toInt)
+		}
+
+		var screen = new Grid[Boolean](50, 6)
+		for (command <- commands) {
+			screen = command(screen)
+		}
+		println(screen.render(Grid.renderBoolean))
+	}
+
 	trait Command {
 		def apply(screen: Grid[Boolean]): Grid[Boolean]
 	}
@@ -44,7 +60,7 @@ object Day8 extends Main {
 
 	case class RotRow(y: Int, by: Int) extends Command {
 		def apply(screen: Grid[Boolean]): Grid[Boolean] = {
-			var newScreen = new Grid[Boolean](50, 6)
+			val newScreen = new Grid[Boolean](50, 6)
 			for (cell <- screen.cells) {
 				if (cell.y == y) {
 					newScreen((cell.x + by) % 50, cell.y) = cell.value
@@ -58,7 +74,7 @@ object Day8 extends Main {
 
 	case class RotCol(x: Int, by: Int) extends Command {
 		def apply(screen: Grid[Boolean]): Grid[Boolean] = {
-			var newScreen = new Grid[Boolean](50, 6)
+			val newScreen = new Grid[Boolean](50, 6)
 			for (cell <- screen.cells) {
 				if (cell.x == x) {
 					newScreen(cell.x, (cell.y + by) % 6) = cell.value

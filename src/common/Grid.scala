@@ -1,5 +1,6 @@
 package common
 
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
 /**
@@ -33,6 +34,18 @@ class Grid[T: ClassTag](val width: Int, val height: Int) extends Iterable[T] {
 
 	def cells: Iterable[Cell[T]] = {
 		for (y <- yIndices; x <- xIndices) yield cell(x, y)
+	}
+
+	def render(implicit converter: T => Char): String = {
+		val sb = new StringBuilder
+
+		for (y <- yIndices) {
+			for (x <- xIndices) {
+				sb.append(converter(apply(x, y)))
+			}
+			sb.append('\n')
+		}
+		sb.result()
 	}
 
 	/**
@@ -97,6 +110,10 @@ object Grid {
 			}
 		}
 		retVal
+	}
+
+	implicit def renderBoolean(b: Boolean): Char = {
+		if (b) '#' else ' '
 	}
 }
 
