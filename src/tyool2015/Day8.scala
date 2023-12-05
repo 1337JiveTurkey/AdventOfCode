@@ -2,7 +2,7 @@ package tyool2015
 
 object Day8 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 
 	def star1(): Unit = {
@@ -12,7 +12,7 @@ object Day8 extends Main {
 
 	def star2(): Unit = {
 		val lines = fileLines("Day8.txt")
-		println(lines.map(escapedLength).sum)
+		println(lines.map(line => escapedLength(line) - line.length).sum)
 	}
 
 	def parsedLength(str: String): Int = {
@@ -35,6 +35,16 @@ object Day8 extends Main {
 	}
 
 	def escapedLength(str: String): Int = {
-		???
+		val sb = new StringBuilder
+		sb.append("\"")
+		for (c <- str) {
+			c match {
+				case '\\' => sb.append("\\\\")
+				case '"' => sb.append("\\\"")
+				case _   => sb.append(c)
+			}
+		}
+		sb.append("\"")
+		sb.result().length
 	}
 }
