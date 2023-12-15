@@ -2,7 +2,7 @@ package tyool2023
 
 object Day9 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 
 	def star1(): Unit = {
@@ -14,6 +14,23 @@ object Day9 extends Main {
 			val lasts = differenceStack.map(_.last)
 			val sumOfLasts = lasts.sum
 			sumOfNewValues += sumOfLasts
+		}
+		println(sumOfNewValues)
+	}
+
+	def star2(): Unit = {
+		val lines = fileLines("Day9.txt")
+		val sequences = lines.map(dividedNumbers)
+		var sumOfNewValues = 0
+		for (sequence <- sequences) {
+			val differenceStack = generateDifferenceStack(sequence)
+			// Now we get the first of each sequence of differences
+			val firsts = differenceStack.map(_.head)
+			var newFirst = 0
+			for(first <- firsts.reverse) {
+				newFirst = first - newFirst
+			}
+			sumOfNewValues += newFirst
 		}
 		println(sumOfNewValues)
 	}
