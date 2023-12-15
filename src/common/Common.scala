@@ -26,8 +26,16 @@ class Common(dirPrefix: String) {
 		line.split(",").flatMap(_.toIntOption)
 	}
 
-	def whitespaceDividedNumbers(line: String): IndexedSeq[Int] = {
-		line.split("\\s+").flatMap(_.toIntOption)
+	/**
+	 * Reads a line with numbers in it separated by something that's not a number
+	 * and splits it into an IndexedSeq containing all the numbers on the line.
+	 * This handles negative numbers correctly.
+	 *
+	 * @param line The line of text to extract the numbers from
+	 * @return The numbers on the line.
+	 */
+	def dividedNumbers(line: String): IndexedSeq[Int] = {
+		line.split("[^\\d\\-]+").flatMap(_.toIntOption)
 	}
 
 	// Splits a string into a list of 2 character substrings
@@ -37,6 +45,10 @@ class Common(dirPrefix: String) {
 
 	def pairwise[T](list: Iterator[T]): Iterator[(T, T)] = {
 		list.sliding(2).map(pair => (pair.head, pair.tail.head))
+	}
+
+	def groupedPairwise[T](list: Iterator[T]): Iterator[(T, T)] = {
+		list.grouped(2).map(pair => (pair.head, pair.tail.head))
 	}
 
 	// Like pairwise but considering three adjacent elements at a time

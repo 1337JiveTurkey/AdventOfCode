@@ -19,7 +19,7 @@ object Day4 extends Main {
 
 		val cards = lines map {
 			case cardPattern(cardNumber, winningNumbers, gameNumbers) =>
-				Card(cardNumber.toInt - 1, whitespaceDividedNumbers(winningNumbers).toSet, whitespaceDividedNumbers(gameNumbers).toSet)
+				Card(cardNumber.toInt - 1, dividedNumbers(winningNumbers).toSet, dividedNumbers(gameNumbers).toSet)
 		}
 		for (card <- cards) {
 			println(card.numberOfMatches)
@@ -32,7 +32,7 @@ object Day4 extends Main {
 
 		val cards = lines map {
 			case cardPattern(cardNumber, winningNumbers, gameNumbers) =>
-				Card(cardNumber.toInt - 1, whitespaceDividedNumbers(winningNumbers).toSet, whitespaceDividedNumbers(gameNumbers).toSet)
+				Card(cardNumber.toInt - 1, dividedNumbers(winningNumbers).toSet, dividedNumbers(gameNumbers).toSet)
 		}
 		val cardCounts = new Array[Int](cards.length)
 		var totalCopies = 0
