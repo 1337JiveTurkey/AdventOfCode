@@ -1,5 +1,6 @@
 package common
 
+import scala.collection.mutable
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
@@ -178,4 +179,20 @@ trait Cell[T] extends Point {
 	}
 
 	def neighbors: List[Cell[T]] = neighbors(DirectionSet.All)
+
+	def floodFill(dirs: DirectionSet)(membership: Cell[T] => Boolean): List[Cell[T]] = {
+		val visited = mutable.Set(this)
+		val queue = mutable.Queue(this)
+
+		while (queue.nonEmpty) {
+			val cell = queue.dequeue()
+			for (neighbor <- cell.neighbors(dirs)) {
+				if (membership(neighbor) && !visited(neighbor)) {
+					visited.add(neighbor)
+					queue.enqueue(neighbor)
+				}
+			}
+		}
+		visited.toList
+	}
 }
