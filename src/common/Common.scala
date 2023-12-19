@@ -66,7 +66,17 @@ class Common(dirPrefix: String) {
 		list.grouped(2).map(pair => (pair.head, pair.tail.head)).toList.unzip
 	}
 
-	// Distinct pairs of elements from the list
+	def cartesianProduct[T](list: IndexedSeq[T]): IndexedSeq[(T, T)] = {
+		val retVal = IndexedSeq.newBuilder[(T, T)]
+		for (x <- list.indices) {
+			for (y <- list.indices) {
+				retVal.addOne((list(x), list(y)))
+			}
+		}
+		retVal.result()
+	}
+
+	// Cartesian product minus the elements (x,x)
 	def allPairs[T](list: IndexedSeq[T]): IndexedSeq[(T, T)] = {
 		val retVal = IndexedSeq.newBuilder[(T, T)]
 		for (x <- list.indices) {
@@ -74,6 +84,16 @@ class Common(dirPrefix: String) {
 				if (x != y) {
 					retVal.addOne((list(x), list(y)))
 				}
+			}
+		}
+		retVal.result()
+	}
+
+	def allDistinctPairs[T](list: IndexedSeq[T]): IndexedSeq[(T, T)] = {
+		val retVal = IndexedSeq.newBuilder[(T, T)]
+		for (x <- 0 until list.length - 1) {
+			for (y <- x + 1 until list.length) {
+				retVal.addOne((list(x), list(y)))
 			}
 		}
 		retVal.result()
