@@ -103,7 +103,7 @@ object Grid {
 	 */
 	def apply[T: ClassTag](lines: Seq[String])(transform: Char => T): Grid[T] = {
 		val height = lines.length
-		val width = lines.head.length
+		val width = lines.maxBy(_.length).length
 		val retVal = new Grid[T](width, height)
 		for ((line, y) <- lines.zipWithIndex) {
 			for((char, x) <- line.zipWithIndex) {
