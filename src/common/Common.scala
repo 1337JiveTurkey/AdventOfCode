@@ -35,7 +35,7 @@ class Common(dirPrefix: String) {
 	 * @return The numbers on the line.
 	 */
 	def dividedNumbers(line: String): IndexedSeq[Int] = {
-		line.split("[^\\d\\-]+").flatMap(_.toIntOption)
+		line.split("""[^\d\-]+""").flatMap(_.toIntOption)
 	}
 
 	// Splits a string into a list of 2 character substrings
