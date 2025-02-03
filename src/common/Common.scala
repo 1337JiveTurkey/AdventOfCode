@@ -15,6 +15,11 @@ class Common(dirPrefix: String) {
 		}
 	}
 
+	def fileText(filename: String): String = {
+		val lines = fileLines(filename)
+		lines.reduce(_ + _)
+	}
+
 	def fileLine(filename: String): String = {
 		val lines = fileLines(filename)
 		assert(lines.length == 1)
