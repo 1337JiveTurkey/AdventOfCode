@@ -5,7 +5,7 @@ import scala.util.matching.Regex
 
 object Day6 extends Main {
 	def main(args: Array[String]): Unit = {
-		star1()
+		star2()
 	}
 
 	val LinePattern: Regex = """(\w+)\)(\w+)""".r
@@ -19,6 +19,19 @@ object Day6 extends Main {
 			child.parent = parent
 		}
 		println(map("COM").updateCounts())
+	}
+
+	def star2(): Unit = {
+		val lines = fileLines("Day6.txt")
+		val map = mutable.HashMap.empty[String, Body]
+		for (LinePattern(parentName, childName) <- lines) {
+			val parent = map.getOrElseUpdate(parentName, Body(parentName))
+			val child = map.getOrElseUpdate(childName, Body(childName))
+			parent.children = child :: parent.children
+			child.parent = parent
+		}
+		map("YOU")
+		map("SAN")
 	}
 
 	case class Body(name: String) {
