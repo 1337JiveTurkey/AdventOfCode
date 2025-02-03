@@ -103,6 +103,20 @@ class Common(dirPrefix: String) {
 		LazyList.continually(s.to(LazyList)).flatten
 	}
 
+	/**
+	 * Generates a sequence of sequences where the nth sequence of the result is
+	 * missing the nth element of the input sequence.
+	 *
+	 * @param s The sequence to exclude the elements of
+	 * @tparam T The type of the original sequence
+	 * @return A sequence of sequences, as described above
+	 */
+	def seqOfSeqComplements[T](s: IndexedSeq[T]): Seq[IndexedSeq[T]] = {
+		for (i <- s.indices) yield {
+			s.take(i) appendedAll s.drop(i+1)
+		}
+	}
+
 	private lazy val md = MessageDigest.getInstance("MD5")
 	// Generate MD5 hash as a hex string
 	def md5(s: String): String = {
