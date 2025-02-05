@@ -149,7 +149,8 @@ trait Cell[T] extends Point {
 	def validDirections: DirectionSet
 
 	/**
-	 * Gets all the cells in a given direction to the edge of the grid
+	 * Gets all the cells in a given direction to the edge of the grid.
+	 * DOES NOT INCLUDE THE ORIGINAL CELL.
 	 *
 	 * @param d The direction to look for cells
 	 * @return All cells in the direction given, from nearest to furthest
@@ -194,5 +195,11 @@ trait Cell[T] extends Point {
 			}
 		}
 		visited.toList
+	}
+}
+
+object Cell {
+	def unapply[T](c: Cell[T]): Option[T] = {
+		Some(c.value)
 	}
 }
