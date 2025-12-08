@@ -2,6 +2,6 @@ package tyool2023
 
 import common.Common
 
-class Main extends Common("src/tyool2023/") {
+class Main extends Common("input/tyool2023/") {
 
 }

@@ -4,6 +4,6 @@ import common.Common
 
 import scala.io.Source
 
-class Main extends Common("src/tyool2021/") {
+class Main extends Common("input/tyool2021/") {
 
 }
