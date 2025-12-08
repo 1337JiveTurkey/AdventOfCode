@@ -1,6 +1,6 @@
 package tyool2024
 
-import common.{BearingSet, Cell, DirectionSet, Grid, Northeast, Northwest, Southeast, Southwest}
+import grid.{BearingSet, Cell, DirectionSet, Grid, Northeast, Northwest, Southeast, Southwest}
 
 object Day4 extends Main {
 	def main(args: Array[String]): Unit = {
@@ -13,7 +13,7 @@ object Day4 extends Main {
 		var total = 0
 		for (cell <- grid.cells) {
 			for (direction <- cell.validDirections) {
-				if (isXmas(cell :: cell.ray(direction))) {
+				if (isXmas(cell #:: cell.ray(direction))) {
 					total += 1
 				}
 			}
@@ -21,9 +21,9 @@ object Day4 extends Main {
 		println(total)
 	}
 
-	def isXmas(ray: List[Cell[Char]]): Boolean = {
+	def isXmas(ray: LazyList[Cell[Char]]): Boolean = {
 		ray match {
-			case Cell('X') :: Cell('M') :: Cell('A') :: Cell('S') :: _ => true
+			case Cell('X') #:: Cell('M') #:: Cell('A') #:: Cell('S') #:: _ => true
 			case _ => false
 		}
 	}

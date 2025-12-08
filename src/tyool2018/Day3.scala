@@ -1,6 +1,6 @@
 package tyool2018
 
-import common.Grid
+import grid.Grid
 
 import scala.util.matching.Regex
 

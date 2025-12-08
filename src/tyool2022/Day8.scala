@@ -1,6 +1,6 @@
 package tyool2022
 
-import common.{DirectionSet, Grid, North}
+import grid.{DirectionSet, Grid, North}
 
 object Day8 extends Main {
 	def main(args: Array[String]): Unit = {

@@ -1,6 +1,6 @@
 package tyool2024
 
-import common.{Direction, DirectionSet, Grid, North}
+import grid.{Direction, DirectionSet, Grid, North, Right}
 
 object Day6 extends Main {
 	def main(args: Array[String]): Unit = {
@@ -21,7 +21,7 @@ object Day6 extends Main {
 			val next = currentCell.get(currentDirection).get
 			next.value match {
 				case Wall =>
-					currentDirection = currentDirection.relative(common.Right)
+					currentDirection = currentDirection.relative(Right)
 					currentCell.value = Visited(DirectionSet(currentDirection))
 				case Space =>
 					currentCell = next
@@ -50,7 +50,7 @@ object Day6 extends Main {
 			val next = currentCell.get(currentDirection).get
 			next.value match {
 				case Wall =>
-					currentDirection = currentDirection.relative(common.Right)
+					currentDirection = currentDirection.relative(Right)
 					currentCell.value = Visited(DirectionSet(currentDirection))
 				case Space =>
 					currentCell = next

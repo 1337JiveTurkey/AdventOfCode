@@ -1,6 +1,6 @@
 package tyool2018
 
-import common.{Grid, Point}
+import grid.{Grid, Point}
 
 import scala.util.matching.Regex
 

@@ -1,6 +1,6 @@
 package tyool2022
 
-import common.{Direction, East, Grid, North, Point, South, West}
+import grid.{Direction, East, Grid, North, Point, South, West}
 
 import scala.util.matching.Regex
 

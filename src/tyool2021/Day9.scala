@@ -1,6 +1,6 @@
 package tyool2021
 
-import common.{Cell, DirectionSet, Grid}
+import grid.{Cell, DirectionSet, Grid}
 
 object Day9 extends Main {
 	def main(args: Array[String]): Unit = {

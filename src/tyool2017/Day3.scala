@@ -1,6 +1,6 @@
 package tyool2017
 
-import common.Grid
+import grid.Grid
 
 object Day3 extends Main {
 	def main(args: Array[String]): Unit = {
