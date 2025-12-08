@@ -27,7 +27,7 @@ object Day3 extends Main {
 			}
 		}
 		var count = 0
-		for (i <- claims) {
+		for (i <- claims.contents) {
 			if (i > 1) {
 				count += 1
 			}
@@ -58,7 +58,7 @@ object Day3 extends Main {
 			}
 		}
 		var remaining = allNumbers.result()
-		for (i <- claims) {
+		for (i <- claims.contents) {
 			if (i != null && i.size > 1) {
 				remaining = remaining.removedAll(i)
 			}

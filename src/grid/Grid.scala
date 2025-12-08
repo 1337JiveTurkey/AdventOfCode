@@ -10,11 +10,11 @@ import scala.reflect.ClassTag
  * @param height Height of the grid
  * @tparam T Type of the grid
  */
-class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior = WrapNeither) extends Iterable[T] {
+class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior = WrapNeither) {
 	val xIndices: Range = 0 until width
 	val yIndices: Range = 0 until height
 
-	private val contents = new Array[T](width * height)
+	private val ts = new Array[T](width * height)
 
 	private def wrapX(x: Int): Int = {
 		if (edges.wrapX) {
@@ -45,10 +45,18 @@ class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior
 	}
 	private def address(x: Int, y: Int): Int = wrapX(x) + width * wrapY(y)
 
-	def apply(x: Int, y: Int): T = contents(address(x, y))
-	def update(x: Int, y: Int, t: T): Unit = contents(address(x, y)) = t
+	def apply(x: Int, y: Int): T = ts(address(x, y))
+	def update(x: Int, y: Int, t: T): Unit = ts(address(x, y)) = t
 
-	override def iterator: Iterator[T] = contents.iterator
+	def contents: Iterable[T] = ts
+
+	def mapCells[R: ClassTag](op: Cell[T] => R): Grid[R] = {
+		val retVal = new Grid[R](width, height, edges)
+		for ((cell, i) <- cells.zipWithIndex) {
+			retVal.ts(i) = op(cell)
+		}
+		retVal
+	}
 
 	def cell(x: Int, y: Int): Cell[T] = CellImpl(wrapX(x), wrapY(y))
 
@@ -58,7 +66,7 @@ class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior
 
 	def withEdges(edgeBehavior: EdgeBehavior): Grid[T] = {
 		val retVal = new Grid[T](width, height, edgeBehavior)
-		System.arraycopy(contents, 0, retVal.contents, 0, contents.length)
+		System.arraycopy(ts, 0, retVal.ts, 0, ts.length)
 		retVal
 	}
 
@@ -81,8 +89,6 @@ class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior
 	 * @return The subgrid containing the points from the indices.
 	 */
 	def subGrid(fromXIndices: Iterable[Int], fromYIndices: Iterable[Int]): Grid[T] = {
-		val xSize = fromXIndices.size
-		val ySize = fromYIndices.size
 		val retVal = new Grid[T](fromXIndices.size, fromYIndices.size)
 		for ((fromX, toX) <- fromXIndices.zipWithIndex; (fromY, toY) <- fromYIndices.zipWithIndex) {
 			retVal(toX, toY) = apply(fromX, fromY)

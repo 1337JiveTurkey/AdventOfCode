@@ -24,7 +24,7 @@ object Day8 extends Main {
 		for (command <- commands) {
 			screen = command(screen)
 		}
-		println(screen.count(identity))
+		println(screen.contents.count(identity))
 	}
 
 	def star2(): Unit = {

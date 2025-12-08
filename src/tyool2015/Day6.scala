@@ -69,7 +69,7 @@ object Day6 extends Main {
 		for (instruction <- instructions) {
 			instruction.operate(lights)
 		}
-		val total: Int = lights.iterator.count(_ == true)
+		val total: Int = lights.contents.count(_ == true)
 		println(total)
 	}
 
@@ -81,7 +81,7 @@ object Day6 extends Main {
 			instruction.operateInt(lights)
 		}
 		var total = 0
-		for (light <- lights) {
+		for (light <- lights.contents) {
 			total = total + light
 		}
 		println(total)

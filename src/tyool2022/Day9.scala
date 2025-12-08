@@ -30,7 +30,7 @@ object Day9 extends Main {
 				grid(tail.x, tail.y) = true
 			}
 		}
-		println(grid.iterator.count(identity))
+		println(grid.contents.count(identity))
 	}
 
 	def star2(): Unit = {
@@ -52,7 +52,7 @@ object Day9 extends Main {
 				grid(tail.x, tail.y) = true
 			}
 		}
-		println(grid.iterator.count(identity))
+		println(grid.contents.count(identity))
 	}
 
 
