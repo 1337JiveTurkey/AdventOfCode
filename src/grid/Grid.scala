@@ -58,6 +58,10 @@ class Grid[T: ClassTag](val width: Int, val height: Int, val edges: EdgeBehavior
 		retVal
 	}
 
+	def countCells(op: Cell[T] => Boolean): Int = {
+		cells.count(op)
+	}
+
 	def cell(x: Int, y: Int): Cell[T] = CellImpl(wrapX(x), wrapY(y))
 
 	def cells: Iterable[Cell[T]] = {
