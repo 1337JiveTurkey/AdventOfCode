@@ -11,8 +11,7 @@ This is a repository of the various Advent of Code solutions that I've cooked up
 - `input`: The root of the input tree, not shared due to the wishes of the puzzle creator. You will need to provide this separately
   - `input/tyool20xx`: Inputs for 20*xx*, generally of the form Day*n*.txt
 
-[!NOTE]
-This structure of sticking library functions in `src/common/Common.scala` other than the ones that read the input wasn't the best choice and needs to be cleaned up at some point.
+**NOTE**: This structure of sticking library functions in `src/common/Common.scala` other than the ones that read the input wasn't the best choice and needs to be cleaned up at some point.
 
 ## The `src/grid` Library
 Since it's used so many places a short explanation of what `src/grid` is worthwhile. The `src/grid` library wraps a single-dimensional array of some arbitrary type to make it look like a 2D grid of that type. It comes with a variety of utility classes that are used throughout the project based on an old roguelike I had worked on years ago.
